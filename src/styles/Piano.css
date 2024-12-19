@@ -1,0 +1,66 @@
+.piano {
+    display: flex;
+    position: relative; /* 검은 건반 위치를 조정하기 위해 relative 설정 */
+    justify-content: flex-start;
+    align-items: flex-end;
+    margin: 0 auto;
+    width: 720px; /* 전체 흰 건반 12개의 크기 */
+    height: 200px; /* 피아노 높이 */
+    background: white; /* 오른쪽 검은 배경 제거 */
+    border-radius: 10px;
+  }
+  
+  .key {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  
+  .key:active, .key.pressed {
+    transform: scale(0.95); /* 눌리는 효과 */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  }
+  
+  .white-key {
+    width: 60px; /* 흰 건반 너비 */
+    height: 100%;
+    background: white;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: relative;
+    z-index: 1; /* 흰 건반이 아래쪽에 위치 */
+  }
+  
+  .white-key.pressed {
+    background: #e0e0e0; /* 흰 건반 눌림 색상 */
+  }
+  
+  .black-key.pressed {
+    background: #333; /* 검은 건반 눌림 색상 */
+  }
+
+  .black-key {
+    width: 40px; /* 검은 건반 너비 */
+    height: 120px; /* 검은 건반 높이 (흰 건반의 60%) */
+    background: black;
+    position: absolute;
+    top: 0; /* 상단으로 이동 */
+    z-index: 2; /* 흰 건반 위에 표시 */
+    left: calc(50% - 20px); /* 흰 건반의 중앙에 배치 */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    border-radius: 5px;
+    color: white; /* 검은 건반 텍스트를 흰색으로 변경 */
+    font-size: 12px;
+  }
+  
+  .key-label {
+    font-size: 12px;
+    position: absolute;
+    bottom: 5px;
+    color: inherit; /* 부모의 글자색을 상속받음 */
+  }
+  
