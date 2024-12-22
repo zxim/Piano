@@ -19,12 +19,17 @@ const Key: React.FC<KeyProps> = ({ note, keyLabel, isBlack, relativePosition }) 
       if (!audioContextRef.current) {
         audioContextRef.current = new AudioContext();
       }
-
-      const response = await fetch(`/src/assets/sounds/${note}.mp3`);
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
-      audioBufferRef.current = audioBuffer;
+    
+      try {
+        const response = await fetch(`/sounds/${note}.mp3`); // 경로 수정
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
+        audioBufferRef.current = audioBuffer;
+      } catch (error) {
+        console.error(`Failed to load audio for ${note}:`, error);
+      }
     };
+    
 
     loadAudio().catch((err) => console.error(`Failed to load audio for ${note}:`, err));
   }, [note]);
@@ -93,31 +98,33 @@ const Key: React.FC<KeyProps> = ({ note, keyLabel, isBlack, relativePosition }) 
 
   return (
     <div
-      className={`key ${isBlack ? 'black-key' : 'white-key'} ${
-        isPressed ? 'pressed' : ''
-      }`}
-      style={
-        isBlack
-          ? { left: `${relativePosition ? relativePosition * 60 - 20 : 0}px` }
-          : {}
-      }
-      onMouseDown={() => {
-        if (!isPressed) {
-          setIsPressed(true);
-          playSound();
-        }
-      }}
-      onMouseUp={() => {
-        setIsPressed(false);
-        stopSound();
-      }}
-      onMouseLeave={() => {
-        setIsPressed(false);
-        stopSound();
-      }}
-    >
-      <span className="key-label">{keyLabel}</span>
-    </div>
+  className={`key ${isBlack ? 'black-key' : 'white-key'} ${
+    isPressed ? 'pressed' : ''
+  }`}
+  data-note={note} // 음계 데이터 속성 추가
+  style={
+    isBlack
+      ? { left: `${relativePosition ? relativePosition * 60 - 20 : 0}px` }
+      : {}
+  }
+  onMouseDown={() => {
+    if (!isPressed) {
+      setIsPressed(true);
+      playSound();
+    }
+  }}
+  onMouseUp={() => {
+    setIsPressed(false);
+    stopSound();
+  }}
+  onMouseLeave={() => {
+    setIsPressed(false);
+    stopSound();
+  }}
+>
+  <span className="key-label">{keyLabel}</span>
+</div>
+
   );
 };
 
