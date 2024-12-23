@@ -19,9 +19,16 @@ const Key: React.FC<KeyProps> = ({ note, keyLabel, isBlack, relativePosition }) 
       if (!audioContextRef.current) {
         audioContextRef.current = new AudioContext();
       }
-    
+
       try {
-        const response = await fetch(`/sounds/${note}.mp3`); // 경로 수정
+        // src/assets/sounds/ 경로에서 파일을 동적으로 로드
+        const audioPath = new URL(`../assets/sounds/${note}.mp3`, import.meta.url).href;
+        const response = await fetch(audioPath);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch audio file for ${note}: ${response.statusText}`);
+        }
+
         const arrayBuffer = await response.arrayBuffer();
         const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
         audioBufferRef.current = audioBuffer;
@@ -29,7 +36,6 @@ const Key: React.FC<KeyProps> = ({ note, keyLabel, isBlack, relativePosition }) 
         console.error(`Failed to load audio for ${note}:`, error);
       }
     };
-    
 
     loadAudio().catch((err) => console.error(`Failed to load audio for ${note}:`, err));
   }, [note]);
@@ -66,8 +72,8 @@ const Key: React.FC<KeyProps> = ({ note, keyLabel, isBlack, relativePosition }) 
 
     setTimeout(() => {
       gainNode.disconnect();
-      gainNodeRef.current = null; 
-    }, 1500); 
+      gainNodeRef.current = null;
+    }, 1500);
   };
 
   useEffect(() => {
@@ -98,33 +104,32 @@ const Key: React.FC<KeyProps> = ({ note, keyLabel, isBlack, relativePosition }) 
 
   return (
     <div
-  className={`key ${isBlack ? 'black-key' : 'white-key'} ${
-    isPressed ? 'pressed' : ''
-  }`}
-  data-note={note} // 음계 데이터 속성 추가
-  style={
-    isBlack
-      ? { left: `${relativePosition ? relativePosition * 60 - 20 : 0}px` }
-      : {}
-  }
-  onMouseDown={() => {
-    if (!isPressed) {
-      setIsPressed(true);
-      playSound();
-    }
-  }}
-  onMouseUp={() => {
-    setIsPressed(false);
-    stopSound();
-  }}
-  onMouseLeave={() => {
-    setIsPressed(false);
-    stopSound();
-  }}
->
-  <span className="key-label">{keyLabel}</span>
-</div>
-
+      className={`key ${isBlack ? 'black-key' : 'white-key'} ${
+        isPressed ? 'pressed' : ''
+      }`}
+      data-note={note}
+      style={
+        isBlack
+          ? { left: `${relativePosition ? relativePosition * 60 - 20 : 0}px` }
+          : {}
+      }
+      onMouseDown={() => {
+        if (!isPressed) {
+          setIsPressed(true);
+          playSound();
+        }
+      }}
+      onMouseUp={() => {
+        setIsPressed(false);
+        stopSound();
+      }}
+      onMouseLeave={() => {
+        setIsPressed(false);
+        stopSound();
+      }}
+    >
+      <span className="key-label">{keyLabel}</span>
+    </div>
   );
 };
 
