@@ -74,7 +74,7 @@ const Key: React.FC<KeyProps> = ({ note, keyLabel, isBlack, relativePosition }) 
       gainNode.disconnect();
       gainNodeRef.current = null;
     }, 1500);
-  };
+  };  
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
